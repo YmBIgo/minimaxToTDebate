@@ -205,11 +205,11 @@ function minimax(
   }
 }
 
-async function main() {
+async function main(firstState: string, theme: string) {
   console.time("main");
   const initialHistory: History = {
     position: "A",
-    content: "",
+    content: firstState,
     reason: "",
     score: 0,
   };
@@ -220,7 +220,7 @@ async function main() {
     children: [],
   };
   const now = Date.now().toString();
-  await generateTree(frontier, frontier, "", "B");
+  await generateTree(frontier, frontier, theme, "B");
   await fs.writeFile(`json/${now}_tree.json`, JSON.stringify(frontier, null, 2));
   main2(now, frontier);
   console.timeEnd("main");
@@ -256,4 +256,4 @@ async function main2(now: string, frontier?: Tree) {
   await fs.writeFile(`json/${now}_trajectory.json`, JSON.stringify(resultTrajectory, null, 2));
 }
 
-main();
+main("日本は原子力発電を推進すべきだと思います。なぜなら、再生可能エネルギーだけではエネルギー需要を満たすことが難しいからです。", "日本は原子力発電を推進すべきか");
