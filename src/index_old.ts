@@ -151,49 +151,57 @@ ${trajectory.map(h => `${h.position}: ${h.content}`).join("\n")}
 
 function minimax(
   frontier: Tree,
-  currentTrees: Tree,
+  currentTrees: Tree[],
   resultTrajectory: History[],
   isMaximizing: boolean
-): {score: number, result: History[]} {
-  if (!currentTrees.children || currentTrees.children.length === 0) {
-    console.log("Leaf node reached!", resultTrajectory.length);
-    return {
-      score: currentTrees.history.score,
-      result: [...resultTrajectory]
-    };
+): History[] {
+  if (currentTrees.every((t) => t.parentTreeId === null)) {
+    return resultTrajectory;
   }
   if (isMaximizing) {
     let maxScore = -Infinity;
-    let currentMaxTrajectory: History[] = [];
-    for (const tree of currentTrees.children) {
-      const minimaxResult = minimax(frontier, tree, [...resultTrajectory, tree.history], false);
-      const score = minimaxResult.score;
-      const trajectory = minimaxResult.result;
+    let currentMaxTree: Tree | null = null;
+    for (const tree of currentTrees) {
+      const score = tree.history.score;
       if (score > maxScore) {
         maxScore = score;
-        currentMaxTrajectory = [...trajectory];
+        currentMaxTree = tree
       }
     }
-    return {
-      score: maxScore,
-      result: currentMaxTrajectory ? [...currentMaxTrajectory] : resultTrajectory
-    };
+    if (currentMaxTree && currentMaxTree.parentTreeId) {
+      const newTrajectory = [...resultTrajectory, currentMaxTree.history];
+      const parentTree = getTreeById(frontier, currentMaxTree.parentTreeId);
+      const grandParentTree = parentTree && parentTree.parentTreeId ? getTreeById(frontier, parentTree.parentTreeId) : null;
+      if (grandParentTree) {
+        return minimax(frontier, [...grandParentTree.children], newTrajectory, false);
+      } else {
+        return newTrajectory;
+      }
+    } else {
+      return resultTrajectory;
+    }
   } else {
     let minScore = Infinity;
-    let currentMinTrajectory: History[] = [];
-    for (const tree of currentTrees.children) {
-      const minimaxResult = minimax(frontier, tree, [...resultTrajectory, tree.history], true);
-      const score = minimaxResult.score;
-      const trajectory = minimaxResult.result;
+    let currentMinTree: Tree | null = null;
+    for (const tree of currentTrees) {
+      const score = tree.history.score;
       if (score < minScore) {
         minScore = score;
-        currentMinTrajectory = [...trajectory];
+        currentMinTree = tree
       }
     }
-    return {
-      score: minScore,
-      result: currentMinTrajectory ? [...currentMinTrajectory] : resultTrajectory
-    };
+    if (currentMinTree && currentMinTree.parentTreeId) {
+      const newTrajectory = [...resultTrajectory, currentMinTree.history];
+      const parentTree = getTreeById(frontier, currentMinTree.parentTreeId);
+      const grandParentTree = parentTree && parentTree.parentTreeId ? getTreeById(frontier, parentTree.parentTreeId) : null;
+      if (grandParentTree) {
+        return minimax(frontier, [...grandParentTree.children], newTrajectory, true);
+      } else {
+        return newTrajectory;
+      }
+    } else {
+      return resultTrajectory;
+    }
   }
 }
 
@@ -221,14 +229,31 @@ async function main(firstState: string, theme: string) {
 async function main2(now: string, frontier?: Tree) {
   let frontier2: Tree;
   if (!frontier) {
-    frontier2 = JSON.parse(await fs.readFile(`json/1781436299376_tree.json`, "utf-8")) as Tree;
+    frontier2 = JSON.parse(await fs.readFile(`json/tree_1781434386017.json`, "utf-8")) as Tree;
   } else {
     frontier2 = frontier;
   }
-  const resultTrajectory = minimax(frontier2, frontier2, [], true);
+  const searchDepth = predictStep - 1;
+  let searchTrees: Tree[] = [];
+  function dfs(frontier: Tree, id: string, depth: number): void {
+    if (depth === searchDepth) {
+      const tree = getTreeById(frontier, id);
+      if (tree) {
+        searchTrees.push(tree);
+      }
+      return;
+    }
+    const tree = getTreeById(frontier, id);
+    if (tree) {
+      for (const child of tree.children) {
+        dfs(frontier, child.id, depth + 1);
+      }
+    }
+  }
+  dfs(frontier2, frontier2.id, 0);
+  const resultTrajectory = minimax(frontier2, searchTrees, [], true);
   console.log("Best trajectory:", resultTrajectory);
   await fs.writeFile(`json/${now}_trajectory.json`, JSON.stringify(resultTrajectory, null, 2));
 }
 
-// main("日本は原子力発電を推進すべきだと思います。なぜなら、再生可能エネルギーだけではエネルギー需要を満たすことが難しいからです。", "日本は原子力発電を推進すべきか");
-main2(Date.now().toString());
+main("日本は原子力発電を推進すべきだと思います。なぜなら、再生可能エネルギーだけではエネルギー需要を満たすことが難しいからです。", "日本は原子力発電を推進すべきか");
