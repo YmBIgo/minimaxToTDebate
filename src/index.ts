@@ -156,7 +156,6 @@ function minimax(
   isMaximizing: boolean
 ): {score: number, result: History[]} {
   if (!currentTrees.children || currentTrees.children.length === 0) {
-    console.log("Leaf node reached!", resultTrajectory.length);
     return {
       score: currentTrees.history.score,
       result: [...resultTrajectory]
@@ -221,14 +220,14 @@ async function main(firstState: string, theme: string) {
 async function main2(now: string, frontier?: Tree) {
   let frontier2: Tree;
   if (!frontier) {
-    frontier2 = JSON.parse(await fs.readFile(`json/1781436299376_tree.json`, "utf-8")) as Tree;
+    frontier2 = JSON.parse(await fs.readFile(`json/1781693458292_tree.json`, "utf-8")) as Tree;
   } else {
     frontier2 = frontier;
   }
-  const resultTrajectory = minimax(frontier2, frontier2, [], true);
+  const resultTrajectory = minimax(frontier2, frontier2, [], false);
   console.log("Best trajectory:", resultTrajectory);
   await fs.writeFile(`json/${now}_trajectory.json`, JSON.stringify(resultTrajectory, null, 2));
 }
 
-// main("日本は原子力発電を推進すべきだと思います。なぜなら、再生可能エネルギーだけではエネルギー需要を満たすことが難しいからです。", "日本は原子力発電を推進すべきか");
-main2(Date.now().toString());
+main("日本は原子力発電を推進すべきだと思います。なぜなら、再生可能エネルギーだけではエネルギー需要を満たすことが難しいからです。", "日本は原子力発電を推進すべきか");
+// main2(Date.now().toString());
