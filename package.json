@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx tsx src/index.ts"
+    "start": "npx tsx src/index.ts",
+    "pick": "npx tsx src/pick_topics.ts"
   },
   "keywords": [],
   "author": "",

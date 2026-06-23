@@ -9,14 +9,14 @@ type History = {
   score: number;
 }
 
-type Tree = {
+export type Tree = {
   id: string;
   history: History;
   parentTreeId: string | null;
   children: Tree[];
 }
 
-const predictStep = 5;
+const predictStep = 7;
 
 const openaiClient = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
