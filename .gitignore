@@ -5,5 +5,7 @@ sample/*
 results/*
 txt/*
 kokkai/*
+kokkai_raw/*
+old/*
 
 .DS_Store

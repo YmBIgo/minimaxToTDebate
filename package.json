@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx tsx src/index.ts",
     "pick": "npx tsx src/pick_topics.ts",
-    "kokkai": "npx tsx src/kokkai.ts"
+    "kokkai": "npx tsx src/kokkai.ts",
+    "scrape": "npx tsx scrape/index.ts"
   },
   "keywords": [],
   "author": "",
