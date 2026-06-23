@@ -1,14 +1,11 @@
 import fs from "fs/promises";
-import OpenAI from "openai";
+import {getLLMResponse} from "./llm/index.js";
 
-const openaiClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const model = "gpt-5.1"
 const textChunkSize = 5;
 const answerChunkSize = 10;
 const categoryChunkSize = 15;
+
+const llmType = "anthropic"; // Change this to 'openai' or 'plamo' or 'anthropic' as needed
 
 type Participant = {
   name: string;
@@ -410,15 +407,13 @@ async function main(filePath: string) {
   let participantList: Participant[] = [];
   try {
     console.log("Fetching participant data...");
-    const participantResponse = await openaiClient.responses.create({
-      model,
-      input: participantData,
-      instructions: searchParticipantPrompt,
-      tools: [
-          { type: "web_search" },
-      ],
-    });
-    participantList = JSON.parse(participantResponse.output_text.replace(/```json/g, "").replace(/```/g, "")).map(convertParticipant);
+    const participantResponse = await getLLMResponse(
+      "openai",
+      participantData,
+      searchParticipantPrompt,
+      true
+    );
+    participantList = JSON.parse(participantResponse.replace(/```json/g, "").replace(/```/g, "")).map(convertParticipant);
     console.log(`Fetched ${participantList.length} participants.`);
   } catch (error) {
     console.error("Error fetching participant data:", error);
@@ -492,17 +487,17 @@ async function main(filePath: string) {
         continue;
       }
       try {
-        const categorizeResponse = await openaiClient.responses.create({
-          model,
-          input: JSON.stringify(
+        const categorizeResponse = await getLLMResponse(
+          llmType,
+          JSON.stringify(
             {
               ...Object.fromEntries(answerChunk.map((answer, index) => [i * answerChunkSize + index, answer.content])),
               categories: partyAnswerTopics[party],
             }
           ),
-          instructions: categorizePrompt(categoryChunkSize + i * categoryChunkSize),
-        });
-        const categories: Category[] = JSON.parse(categorizeResponse.output_text.replace(/```json/g, "").replace(/```/g, ""));
+          categorizePrompt(categoryChunkSize + i * categoryChunkSize),
+        );
+        const categories: Category[] = JSON.parse(categorizeResponse.replace(/```json/g, "").replace(/```/g, ""));
         for (const newCategory of categories) {
           const existing = partyAnswerTopics[party].find(
             (category) => category.name === newCategory.name
@@ -545,6 +540,6 @@ async function main(filePath: string) {
   await fs.writeFile(`kokkai/${firstLine}/${now}/partyAnswerTopics.json`, JSON.stringify(partyAnswerTopics, null, 2), "utf-8");
 }
 
-main("./txt/FKG004_20260623_194940.txt").catch((error) => {
+main("./txt/FKG004_20260623_155516.txt").catch((error) => {
   console.error("Error:", error);
 });
