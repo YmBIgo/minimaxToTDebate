@@ -3,3 +3,7 @@ dist/*
 json/*
 sample/*
 results/*
+txt/*
+kokkai/*
+
+.DS_Store
