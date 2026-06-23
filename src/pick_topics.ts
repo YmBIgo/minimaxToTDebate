@@ -28,7 +28,7 @@ const categorizePrompt = `あなたは議論・答弁の分類専門家です。
 - 責任追及をしている
 
 注意：
-- カテゴリ数は5〜12個程度にしてください。
+- カテゴリ数は5〜25個程度にしてください。
 - 1つの答弁は原則1カテゴリに入れてください。
 - カテゴリ名は短く、説明は具体的にしてください。
 - 答弁の表現ではなく、主張の性質で分類してください。
@@ -95,6 +95,7 @@ async function main(filePath: string) {
   });
 //   As = As.slice(0, 100);
   await fs.writeFile(`json/${now}_As.json`, JSON.stringify(As, null, 2), "utf-8");
+  await fs.writeFile(`json/${now}_Bs.json`, JSON.stringify(Bs, null, 2), "utf-8");
   const splittedAs: string[][] = [];
   for (let i = 0; i < As.length; i += 50) {
     splittedAs.push(As.slice(i, i + 50));
@@ -140,7 +141,7 @@ async function main(filePath: string) {
       console.error("Error categorizing As:", error);
     }
   }
-  console.log("Categorized As:", categorizedAs);
+  console.log("Categorized As:", categorizedAs.length);
   await fs.writeFile(`json/${now}_categorized_As.json`, JSON.stringify(categorizedAs, null, 2), "utf-8");
   let categorizedBs: Category[] = [];
   for (let i = 0; i < splittedBs.length; i++) {
@@ -179,7 +180,7 @@ async function main(filePath: string) {
       console.error("Error categorizing Bs:", error);
     }
   }
-  console.log("Categorized Bs:", categorizedBs);
+  console.log("Categorized Bs:", categorizedBs.length);
   await fs.writeFile(`json/${now}_categorized_Bs.json`, JSON.stringify(categorizedBs, null, 2), "utf-8");
 }
 
