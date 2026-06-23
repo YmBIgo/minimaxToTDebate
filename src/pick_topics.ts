@@ -15,7 +15,7 @@ const openaiClient = new OpenAI({
 
 const model = "gpt-5.1"
 
-const categorizePrompt = `あなたは議論・答弁の分類専門家です。
+const categorizePrompt = (count: number) => { return `あなたは議論・答弁の分類専門家です。
 与えられた答弁を「言っている内容の性質」で分類してください。
 
 分類基準の例：
@@ -28,7 +28,7 @@ const categorizePrompt = `あなたは議論・答弁の分類専門家です。
 - 責任追及をしている
 
 注意：
-- カテゴリ数は5〜25個程度にしてください。
+- カテゴリ数は5〜${count}個程度にしてください。
 - 1つの答弁は原則1カテゴリに入れてください。
 - カテゴリ名は短く、説明は具体的にしてください。
 - 答弁の表現ではなく、主張の性質で分類してください。
@@ -67,6 +67,7 @@ const categorizePrompt = `あなたは議論・答弁の分類専門家です。
 ]
 \`\`\`
 `
+}
 
 async function getFrontier(filePath: string): Promise<Tree> {
   const data = await fs.readFile(filePath, "utf-8");
@@ -118,7 +119,7 @@ async function main(filePath: string) {
             categories: categorizedAs.map(c => c.name)
           }
         ),
-        instructions: categorizePrompt,
+        instructions: categorizePrompt(10 + i * 3),
       });
       const newCategorizedAs: Category[] = JSON.parse(response.output_text.replace(/```json/, "").replace(/```/, ""));
       newCategorizedAs.forEach((c) => {
@@ -157,7 +158,7 @@ async function main(filePath: string) {
             categories: categorizedBs.map(c => c.name)
           }
         ),
-        instructions: categorizePrompt,
+        instructions: categorizePrompt(10 + i * 3),
       });
       const newCategorizedBs: Category[] = JSON.parse(response.output_text.replace(/```json/, "").replace(/```/, ""));
       newCategorizedBs.forEach((c) => {
