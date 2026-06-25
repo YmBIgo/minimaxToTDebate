@@ -185,4 +185,4 @@ async function main(filePath: string) {
   await fs.writeFile(`json/${now}_categorized_Bs.json`, JSON.stringify(categorizedBs, null, 2), "utf-8");
 }
 
-main("json/1782215869185_tree.json").catch(console.error);
+main("json/1782301687211_tree.json").catch(console.error);

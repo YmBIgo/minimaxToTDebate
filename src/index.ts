@@ -217,12 +217,12 @@ async function main(firstState: string, theme: string) {
   };
   const now = Date.now().toString();
   await generateTree(frontier, frontier, theme, "B");
-  await fs.writeFile(`json/${now}_tree.json`, JSON.stringify(frontier, null, 2));
-  main2(now, frontier);
+  await fs.writeFile(`json/${theme}/${now}_tree.json`, JSON.stringify(frontier, null, 2));
+  main2(now, frontier, theme);
   console.timeEnd("main");
 }
 
-async function main2(now: string, frontier?: Tree) {
+async function main2(now: string, frontier?: Tree, theme?: string) {
   let frontier2: Tree;
   if (!frontier) {
     frontier2 = JSON.parse(await fs.readFile(`json/1781693458292_tree.json`, "utf-8")) as Tree;
@@ -231,11 +231,16 @@ async function main2(now: string, frontier?: Tree) {
   }
   const resultTrajectory = minimax(frontier2, frontier2, [], false);
   console.log("Best trajectory:", resultTrajectory);
-  await fs.writeFile(`json/${now}_trajectory.json`, JSON.stringify(resultTrajectory, null, 2));
+  await fs.writeFile(`json${theme ? `/${theme}` : ""}/${now}_trajectory.json`, JSON.stringify(resultTrajectory, null, 2));
 }
 
-const lawStatement = `自民党として、国民投票制度の適切な運用に向け、まず必要な環境整備を着実に進めるべきと考えます。特に、開票立会人制度の整備、投票立会人要件の緩和、FM放送による広報追加の3項目については、速やかな法案提出と審議入りが必要です。また、CM規制については、国民投票運動における表現の自由を尊重しつつ、法規制よりも自主規制を基本に公平性を確保すべきと考えます。加えて、ネット広告やSNS上の偽情報、ディープフェイクへの対応は重要な課題であり、通常選挙での議論も踏まえながら慎重に検討を深める必要があります。資金規制についても理念面・実務面の双方から丁寧な議論が求められます。あわせて、公正中立な情報提供を担う国民投票広報協議会の体制整備も進め、国民が適切に判断できる環境を整えるべきと考えます。`
+// const lawStatement = `自民党として、国民投票制度の適切な運用に向け、まず必要な環境整備を着実に進めるべきと考えます。特に、開票立会人制度の整備、投票立会人要件の緩和、FM放送による広報追加の3項目については、速やかな法案提出と審議入りが必要です。また、CM規制については、国民投票運動における表現の自由を尊重しつつ、法規制よりも自主規制を基本に公平性を確保すべきと考えます。加えて、ネット広告やSNS上の偽情報、ディープフェイクへの対応は重要な課題であり、通常選挙での議論も踏まえながら慎重に検討を深める必要があります。資金規制についても理念面・実務面の双方から丁寧な議論が求められます。あわせて、公正中立な情報提供を担う国民投票広報協議会の体制整備も進め、国民が適切に判断できる環境を整えるべきと考えます。`
+// const lawTitle = "国民投票制度の適切な運用に向け、まず必要な環境整備を着実に進めるべきか";
+const iranStatement = `現在の中東情勢、とりわけイスラエル及び米国によるイラン攻撃について、我が国として重大な関心を持って注視しております。何より重要なのは、在留邦人の安全確保であります。
+安全保障法制上の『存立危機事態』や『重要影響事態』への該当性については、個別具体的な状況を総合的に勘案し、政府が慎重に判断すべきものであり、現時点で直ちに該当すると判断する状況にはありません。
+政府には、関係国と緊密に連携しつつ、事態の早期鎮静化に向け、外交努力を尽くしていただきたいと思います。`
+const iranTitle = "イラン情勢と日本の安全保障法制上の事態認定";
 
 // main("日本は原子力発電を推進すべきだと思います。なぜなら、再生可能エネルギーだけではエネルギー需要を満たすことが難しいからです。", "日本は原子力発電を推進すべきか");
 // main2(Date.now().toString());
-main(lawStatement, "国民投票制度の適切な運用に向け、まず必要な環境整備を着実に進めるべきか");
+main(iranStatement, iranTitle);
