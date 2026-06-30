@@ -7,5 +7,6 @@ txt/*
 kokkai/*
 kokkai_raw/*
 old/*
+src/kokkai_sandbox.ts
 
 .DS_Store

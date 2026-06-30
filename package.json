@@ -7,7 +7,9 @@
     "start": "npx tsx src/index.ts",
     "pick": "npx tsx src/pick_topics.ts",
     "kokkai": "npx tsx src/kokkai.ts",
-    "scrape": "npx tsx scrape/index.ts"
+    "scrape": "npx tsx scrape/index.ts",
+    "kokkai_sandbox": "npx tsx src/kokkai_sandbox.ts",
+    "kokkai_indexing": "npx tsx src/kokkai_indexing.ts"
   },
   "keywords": [],
   "author": "",
