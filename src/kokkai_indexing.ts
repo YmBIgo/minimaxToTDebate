@@ -4,6 +4,7 @@ import { pickTopicsPrompt, searchParticipantPrompt, sequencePrompt } from './pro
 import type { Answer, Participant } from './kokkai.js';
 
 const keyword = "安全保障";
+const chunkSize = 20;
 
 async function analyzeFileAndGetCount(filePath: string): Promise<number> {
   try {
@@ -31,20 +32,25 @@ async function analyzeFiles(rootFilePath: string): Promise<void> {
     // }
     // mainStep(fullPath);
     // return;
-    for (const file of files.slice(0, 200)) {
+    let splittedFiles = [];
+    for (let i = 0; i < files.length; i += chunkSize) {
+      splittedFiles.push(files.slice(i, i + chunkSize));
+    }
+    for (const sfiles of splittedFiles.slice(0, 10)) {
+      sfiles.forEach(async (file) => {
       const fullPath = `${rootFilePath}/${file.name}`;
       if (file.isDirectory()) {
         // await analyzeFiles(fullPath);
-        continue; // Skip directories for now
+        return; // Skip directories for now
       } else if (file.isFile() && file.name.endsWith('.txt')) {
         // const count = await analyzeFileAndGetCount(fullPath);
         // countSum += count;
         // console.log(`File: ${fullPath}, Count of '○': ${count}`);
         const count = await analyzeFileAndGetCount(fullPath);
-        if (count === 0) continue;
+        if (count === 0) return;
         mainStep(fullPath)
       }
-    }
+    })}
   } catch (error) {
     console.error(`Error reading directory ${rootFilePath}:`, error);
   }
