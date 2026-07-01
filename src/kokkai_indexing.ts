@@ -3,7 +3,7 @@ import { getLLMResponse } from './llm/index.js';
 import { pickTopicsPrompt, searchParticipantPrompt, sequencePrompt } from './prompt/index.js';
 import type { Answer, Participant } from './kokkai.js';
 
-const keyword = "安全保障";
+const keyword = "○";
 const chunkSize = 20;
 
 async function analyzeFileAndGetCount(filePath: string): Promise<number> {
@@ -36,7 +36,7 @@ async function analyzeFiles(rootFilePath: string): Promise<void> {
     for (let i = 0; i < files.length; i += chunkSize) {
       splittedFiles.push(files.slice(i, i + chunkSize));
     }
-    for (const sfiles of splittedFiles.slice(0, 10)) {
+    for (const sfiles of splittedFiles) {
       sfiles.forEach(async (file) => {
       const fullPath = `${rootFilePath}/${file.name}`;
       if (file.isDirectory()) {
