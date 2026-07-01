@@ -6,6 +6,7 @@ results/*
 txt/*
 kokkai/*
 kokkai_raw/*
+kokkai_lambda/*
 old/*
 src/kokkai_sandbox.ts
 

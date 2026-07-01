@@ -9,7 +9,8 @@
     "kokkai": "npx tsx src/kokkai.ts",
     "scrape": "npx tsx scrape/index.ts",
     "kokkai_sandbox": "npx tsx src/kokkai_sandbox.ts",
-    "kokkai_indexing": "npx tsx src/kokkai_indexing.ts"
+    "kokkai_indexing": "npx tsx src/kokkai_indexing.ts",
+    "kokkai_file": "npx tsx src/kokkai_file.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",
+    "@aws-sdk/client-s3": "^3.1077.0",
     "openai": "^6.42.0",
     "typescript": "^6.0.3"
   },
